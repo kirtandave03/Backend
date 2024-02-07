@@ -6,3 +6,5 @@ class apiResponse {
         this.success = statusCode
     }
 }
+
+module.exports = apiResponse
