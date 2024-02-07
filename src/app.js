@@ -14,6 +14,10 @@ app.use(express.urlencoded({limit: '16kb'})) //url mathi aavto encoded data mate
 app.use(express.static('public'));
 app.use(cookieParser()); // server thi user na browser ni cookies pr CRUD operation karva
 
+// import routes
+const userRouter = require('./routes/user.routes')
 
+//routes declaration
+app.use('/api/v1/users',userRouter);
 
 module.exports = app;
