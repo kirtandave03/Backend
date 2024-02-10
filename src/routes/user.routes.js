@@ -1,7 +1,5 @@
 const Router = require('express').Router
-const registerUser = require('../controllers/user.controller')
-const loginUser = require('../controllers/user.controller')
-const logoutUser = require('../controllers/user.controller');
+const { registerUser,loginUser,logoutUser } = require('../controllers/user.controller')
 const verifyJWT = require('../middlewares/auth.middleware');
 const upload = require('../middlewares/multer.middleware');
 
