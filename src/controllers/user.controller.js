@@ -2,6 +2,7 @@ const asyncHandler = require('../utils/asyncHadler');
 const apiError = require('../utils/apiError');
 const apiResponse = require('../utils/apiResponse');
 const User = require('../models/user.model');
+const Otp = require('../models/otp.model');
 const uploadOnCloudinary = require('../utils/cloudinary');
 const jwt = require('jsonwebtoken');
 
@@ -18,6 +19,11 @@ const generateAccessAndRefreshTokens = async (userId) =>{
         throw new apiError(500,"Something went wrong while genarating Access and refresh Tokens");
    }
 
+}
+
+const generateOtp = ()=>{
+    const otp = Math.floor(1000 + Math.random() * 9000)
+    return otp
 }
 
 const registerUser = asyncHandler(async (req,res)=>{
@@ -185,4 +191,6 @@ const refreshAccessToken = asyncHandler(async (req,res)=>{
         throw new apiError(401,error.message || "Invalid refresh token");
     }
 })
+
+
 module.exports = { registerUser, loginUser, logoutUser, refreshAccessToken  };
