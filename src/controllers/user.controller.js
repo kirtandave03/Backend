@@ -5,7 +5,7 @@ const User = require("../models/user.model");
 const Otp = require("../models/otp.model");
 const uploadOnCloudinary = require("../utils/cloudinary");
 const jwt = require("jsonwebtoken");
-
+const mongoose = require("mongoose");
 const generateAccessAndRefreshTokens = async (userId) => {
   try {
     const user = await User.findById(userId);
@@ -388,6 +388,59 @@ const getUserchannelProfile = asyncHandler(async (req, res) => {
     );
 });
 
+const getWatchHistory = asyncHandler(async (req, res) => {
+  const user = await User.aggregate([
+    {
+      $match: { _id: new mongoose.Types.ObjectId(req.user._id) },
+    },
+    {
+      $lookup: {
+        from: "videos",
+        localField: "watchHistory",
+        foreignField: "_id",
+        as: "watchHistory",
+        pipeline: [
+          {
+            $lookup: {
+              from: "users",
+              localField: "owner",
+              foreignField: "_id",
+              as: "owner",
+              pipeline: [
+                {
+                  $project: {
+                    $project: {
+                      fullname: 1,
+                      avatar: 1,
+                      username: 1,
+                    },
+                  },
+                },
+                {
+                  $addFields: {
+                    owner: {
+                      $first: "$owner",
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ]);
+
+  return res
+    .status(200)
+    .json(
+      new apiResponse(
+        200,
+        user[0].watchHistory,
+        "Watch history fatched successfully"
+      )
+    );
+});
 module.exports = {
   registerUser,
   loginUser,
@@ -399,4 +452,5 @@ module.exports = {
   updateUserAvatar,
   updateUserCoverImage,
   getUserchannelProfile,
+  getWatchHistory,
 };
